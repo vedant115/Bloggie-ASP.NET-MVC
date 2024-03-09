@@ -1,0 +1,35 @@
+﻿Solution is an architecture for organizing project - (Bloggie)
+Solution can have one or many projects
+
+Project File - (Bloggie.Web)
+
+Properties -> launchSettings.json : configuration and launch info of project.
+
+wwwroot -> static files such as HTML, CSS, JS and images are directly served to its clients.
+files under this folders are publicly or directly accessed by your client or browser.
+
+Controllers -> It contains class files for controllers 
+Controllers handles user requests and returns user response
+
+Models -> It contains model class files.
+Model class contains public properties which are used by application to hold and manipulate application data.
+
+Views -> It contains HTML files for application.
+View file is (.cshtml) file which contains c# and html code.
+It contains seperate folder for each controller.
+This files are rendered on web.
+Shared folder contains shared files and partial view files
+
+appsettings.json - all application settings are contain in this file.
+
+
+The content inside startup files are now clubbed inside Program.cs file
+
+
+Domain models - application data
+
+Context file - it is a bridge between domain models and database
+using DbSet<> we tell entity framework to create tables and columns when we create migrations.
+for querying, change tracker, manage relationships.
+responsible for interacting with the database
+performing CRUD operations on our DB tables using Entity Framework.
