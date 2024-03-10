@@ -1,16 +1,19 @@
 ﻿using Bloggie.Web.Data;
 using Bloggie.Web.Models.Domain;
 using Bloggie.Web.Models.ViewModels;
+using Bloggie.Web.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bloggie.Web.Controllers
 {
     public class AdminTagsController : Controller
     {
-        private BloggieDbContext _bloggieDbContext;
-        public AdminTagsController(BloggieDbContext bloggieDbContext)
+        private readonly ITagInterface tagRepository;
+
+        public AdminTagsController(ITagInterface tagRepository)
         {
-            _bloggieDbContext = bloggieDbContext;
+            this.tagRepository = tagRepository;
         }
 
         [HttpGet]
@@ -20,7 +23,7 @@ namespace Bloggie.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Add(AddTagRequest addTagRequest)
+        public async Task<IActionResult> Add(AddTagRequest addTagRequest)
         {
             // Mapping AddTagRequest to Tag domain model
             var tag = new Tag
@@ -29,28 +32,27 @@ namespace Bloggie.Web.Controllers
                 DisplayName = addTagRequest.DisplayName,
             };
 
-            _bloggieDbContext.Tags.Add(tag);
-            _bloggieDbContext.SaveChanges();
+            await tagRepository.AddAsync(tag);
 
             return RedirectToAction("List");
         }
 
         [HttpGet]
-        public IActionResult List()
+        public async Task<IActionResult> List()
         {
             // use db context to read the tags
-            var tags = _bloggieDbContext.Tags.ToList();
+            var tags = await tagRepository.GetAllAsync();
 
             return View(tags);
         }
 
         // input parameter should match the route name
         [HttpGet]
-        public IActionResult Edit(Guid id) 
+        public async Task<IActionResult> Edit(Guid id) 
         {
             //var tag = _bloggieDbContext.Tags.Find(id);
             // OR
-            var tag = _bloggieDbContext.Tags.FirstOrDefault(x => x.Id == id);
+            var tag = await tagRepository.GetAsync(id);
 
             if (tag != null) 
             {
@@ -68,7 +70,7 @@ namespace Bloggie.Web.Controllers
         }
 
         [HttpPost]
-        public IActionResult Edit(EditTagRequest editTagRequest) 
+        public async Task<IActionResult> Edit(EditTagRequest editTagRequest) 
         {
             var tag = new Tag
             {
@@ -77,37 +79,32 @@ namespace Bloggie.Web.Controllers
                 DisplayName = editTagRequest.DisplayName,
             };
 
-            var existingTag = _bloggieDbContext.Tags.Find(tag.Id);
-
-            if(existingTag != null)
+            var updatedTag = await tagRepository.UpdateAsync(tag);
+            if (updatedTag != null)
             {
-                existingTag.Name = tag.Name;
-                existingTag.DisplayName = tag.DisplayName;
-
-                //save changes
-                _bloggieDbContext.SaveChanges();
-                //show success notification
-                return RedirectToAction("Edit", new { id = editTagRequest.Id });
+                //success notificationları
+                return RedirectToAction("List");
+            }
+            else
+            {
+                //fail notificationları
             }
 
-            //show fail notification
             return RedirectToAction("Edit", new {id = editTagRequest.Id});
         }
 
         [HttpPost]
-        public IActionResult Delete(EditTagRequest editTagRequest) 
+        public async Task<IActionResult> Delete(EditTagRequest editTagRequest) 
         {
-            var tag = _bloggieDbContext.Tags.Find(editTagRequest.Id);
-
-            if (tag != null)
+            var deletedTag = await tagRepository.DeleteAsync(editTagRequest.Id);
+            if (deletedTag != null)
             {
-                _bloggieDbContext.Tags.Remove(tag);
-                _bloggieDbContext.SaveChanges();
 
-                //show success
+                //success notification
                 return RedirectToAction("List");
             }
-            //show error
+
+            //error notification
             return RedirectToAction("Edit", new { id = editTagRequest.Id });
         }
     }
