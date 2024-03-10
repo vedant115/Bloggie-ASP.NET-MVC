@@ -33,3 +33,9 @@ using DbSet<> we tell entity framework to create tables and columns when we crea
 for querying, change tracker, manage relationships.
 responsible for interacting with the database
 performing CRUD operations on our DB tables using Entity Framework.
+
+
+MODEL BINDING - 
+first create a view model with required properties
+add that model in view `@model path_to_model`
+add attribute to tags as (asp-for="property name")
