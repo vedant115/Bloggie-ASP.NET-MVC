@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Bloggie.Web.Repositories
 {
-    public class TagRepository : ITagInterface
+    public class TagRepository : ITagRepository
     {
         private readonly BloggieDbContext bloggieDbContext;
 

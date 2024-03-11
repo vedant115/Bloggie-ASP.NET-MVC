@@ -9,9 +9,9 @@ namespace Bloggie.Web.Controllers
 {
     public class AdminTagsController : Controller
     {
-        private readonly ITagInterface tagRepository;
+        private readonly ITagRepository tagRepository;
 
-        public AdminTagsController(ITagInterface tagRepository)
+        public AdminTagsController(ITagRepository tagRepository)
         {
             this.tagRepository = tagRepository;
         }
