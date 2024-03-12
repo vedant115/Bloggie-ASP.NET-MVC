@@ -93,7 +93,7 @@
                 body: data
             }).then(response => response.json())
                 .then(result => {
-                    featuredImageUrlElement.Value = result.link;
+                    featuredImageUrlElement.value = result.link;
                     featuredImageDisplayElement.src = result.link;
                     featuredImageDisplayElement.style.display = 'block';
                 });
